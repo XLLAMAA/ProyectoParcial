@@ -1,0 +1,1 @@
+#Este repositorio es para el primer trabajo de Programacion web, hecho con react. Este proyecto se basa en una web de consulta de informacion de series, dicha informacion es obtenida a su vez de otra llamada TVMaze

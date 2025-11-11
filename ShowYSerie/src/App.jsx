@@ -1,11 +1,11 @@
-// src/App.jsx
 // ─────────────────────────────────────────────────────────────
 // IMPORTS
 // ─────────────────────────────────────────────────────────────
-import { useState } from "react";          // useState: para manejar estados locales
-import "./App.css";                        // Importo tus estilos separados (App.css)
-import SearchBar from "./components/SearchBar.jsx"; // Tu barra de búsqueda (input + botón)
-import ShowSerie from "./components/ShowSerie.jsx"; // Tu tarjeta para pintar cada serie
+import { useState, useEffect } from "react";          // useState: para manejar estados locales
+import "./App.css";                        //Css
+import SearchBar from "./components/SearchBar.jsx"; //Barra de busqueda de series 
+import ShowSerie from "./components/ShowSerie.jsx"; //Tarjeta de cada serie
+import Favorites from "./components/Favorites.jsx"; //Favoritos
 
 
 // ─────────────────────────────────────────────────────────────
@@ -13,11 +13,65 @@ import ShowSerie from "./components/ShowSerie.jsx"; // Tu tarjeta para pintar ca
 // ─────────────────────────────────────────────────────────────
 export default function App() {
   // ───────────────────────────────────────────────────────────
-  // ESTADOS MÍNIMOS
+  // ESTADOS MINIMOS
   // ───────────────────────────────────────────────────────────
-  const [term, setTerm] = useState("");     // term: texto que escribe el usuario en la barra
-  const [results, setResults] = useState([]); // results: array que viene de la API (búsqueda)
-  const [loading, setLoading] = useState(false); // loading: para desactivar el botón mientras busca
+  const [term, setTerm] = useState("");     //Lo que escrribe cada usuario en la barra de busqueda
+  const [results, setResults] = useState([]); //Resultado de la busuqeda
+  const [loading, setLoading] = useState(false); //para desactivar el boton de busqueda mientas incia la busqueda
+  const [favorites, setFavorites] = useState([]);
+
+  // ─────────────────────────────────────────────────────────────
+  //Cargar al abrir la web la lista de favs con sus contenidos
+  // ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+      const fav = localStorage.getItem("ListaFavs");
+      if (fav) {
+        setFavorites(JSON.parse(fav));
+      }
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────
+  //Se guardan los cambios si se hacen
+  // ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+      localStorage.setItem("ListaFavs", JSON.stringify(favorites));
+  }, [favorites]);
+
+  // ─────────────────────────────────────────────────────────────
+  //Comprueba que tienes una serie comparano los id, por que some devuleve true si encuentra alguna que cumpla la condicion, con la condicion de f.id === id
+  // ─────────────────────────────────────────────────────────────
+  const isFav = (id) => {
+    return favorites.some(f => f.id===id);
+  };
+
+// ─────────────────────────────────────────────────────────────
+//Alterna una serie en favoritos: Si ya estaba, lo quita y si no estaba lo agrega
+//prev: es una variable que uso para hacer referencia a la serie mas reciente de favoritos
+// ─────────────────────────────────────────────────────────────
+
+  const toggleFav = (show) => {
+    setFavorites((prev) => {
+      //Si lo eliminmos de la lista, busca la serie por su id y lo eliina de la lista de favoritos
+      const exists = prev.some((f) => f.id === show.id);
+
+      if (exists) {
+          return prev.filter((f) => f.id !== show.id);
+      }
+
+      //Si no existe ya en la lista de favoritos, lo agregamos a la lista
+      const compact = {
+        id: show.id,
+        name: show.name,
+        image: show.image?.medium || show.image?.original || "",
+        rating: show?.rating?.average ?? null,
+        language: show.language || "",
+        genres: show.genres || [],
+      };
+
+      //Devolvemos la nueva lista de favoritos con o sin la nueva/vieja serie
+      return[compact, ...prev];
+    });
+  };
 
   // ───────────────────────────────────────────────────────────
   // FUNCIÓN: search
@@ -27,14 +81,17 @@ export default function App() {
   //   - SIN mensajes de estado: si falla, dejamos results vacío
   // ───────────────────────────────────────────────────────────
   const search = async () => {
-    // Si no hay texto (o solo espacios), no hacemos nada
-    if (!term || !term.trim()) return;
+    //Compruebo que haya texto que buscar en la barra de busqueda
+    if (!term || !term.trim()) {
+      return;
+    }
 
-    // Marcamos "cargando" para bloquear el botón de búsqueda
+    //Bloqueo el boton de buscar
     setLoading(true);
 
     try {
-      // Construimos la URL de búsqueda de TVMaze con el término
+      
+      //El featch de la TVMaze
       const url = `https://api.tvmaze.com/search/shows?q=${encodeURIComponent(term.trim())}`;
 
       // Hacemos la petición GET
@@ -96,11 +153,8 @@ export default function App() {
                 // De momento, lo dejamos como "placeholder" simple (nada de mensajes)
                 // console.log("Detalles:", show?.name);
               }}
-              onToggleFav={() => {
-                // Placeholder de favoritos (implementaremos más tarde)
-                // console.log("Favorito:", show?.id, show?.name);
-              }}
-              fav={false}           // Por ahora, no hay favoritos reales (siempre false)
+              onToggleFav={() => toggleFav(show)}
+              fav={isFav(show.id)}
             />
           );
         })}   

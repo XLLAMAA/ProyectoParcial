@@ -1,25 +1,120 @@
-/* src/App.css */
+/* ============ BASE ============ */
+* { box-sizing: border-box; }
+html, body, #root { min-height: 100%; width: 100%; }
+body { margin: 0; background: #ffffff; color: #0f172a; font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; }
 
-/* Contenedor principal */
-.app {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 16px;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+/* Contenedor superior (padding global) */
+.app { padding: 2rem 1rem; }
+
+/* Título centrado */
+.app__title { margin: 0 0 1rem; font-size: 32px; font-weight: 800; text-align: center; }
+
+/* ============ SEARCHBAR (similar a .SearchBar de tu amigo) ============ */
+.sticky-wrap { position: sticky; top: 0; z-index: 10; padding: 12px 0 10px; background: linear-gradient(#fff, rgba(255,255,255,.9)); }
+.sticky-wrap form {
+  width: 60%; max-width: 60%; min-width: 60%;
+  margin: 2rem auto; display: flex; justify-content: center; position: relative;
+}
+.sticky-wrap input[type="text"]{
+  width: 100%; padding: 16px 20px; font-size: 18px; text-align: center;
+  border-radius: 999px; border: 1px solid #ccc; outline: none;
+  background: #333; color: #fff;
+}
+.sticky-wrap button[type="submit"]{
+  position: absolute; left: 90%; transform: translateX(-50%);
+  width: 35%; height: 100%; border: 0; border-radius: 999px;
+  background: #347f78; color: #fff; cursor: pointer;
+}
+.sticky-wrap button[type="submit"]:hover{ background: #23554f; }
+
+/* ============ LAYOUT (favoritos IZQ fijo | resultados DER) ============ */
+.layout{
+  width: 100%; max-width: 1280px; margin: 0 auto;
+  display: grid; grid-template-columns: 280px minmax(0,1fr); gap: 20px; align-items: start;
 }
 
-/* Título */
-.app__title {
-  margin: 0 0 12px 0;
-  font-size: 24px;
-  font-weight: 700;
+/* ============ FAVORITOS (equivalente a .FavoritesDiv) ============ */
+.favoritosList{
+  position: sticky; top: 20px;
+  width: 100%; background: #e9f0ef; border-radius: 20px; padding: 20px;
+  height: calc(100vh - 120px); overflow-y: auto;
+}
+.NameListFav{ margin: 0 0 10px; font-size: 18px; font-weight: 800; }
+.ListaFav{ display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.ElementoFav{
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px; border-radius: 12px; background: #fff; border: 1px solid #e5e7eb;
+}
+.BotonAbrirFav{
+  display: inline-flex; align-items: center; gap: 10px; background: transparent; border: 0; cursor: pointer; color: #0f172a; font-weight: 700;
+}
+.FotoSerieFav{ width: 36px; height: 36px; object-fit: cover; border-radius: 6px; background: #0f172a; }
+.NombreSerieFav{ font-size: 14px; }
+.RankingSerieFav{ font-size: 13px; color: #6b7280; }
+.EliminarDeFav{
+  background: #ffe6e6; border: 1px solid #ffb3b3; color: #b30000;
+  padding: 6px 10px; border-radius: 10px; cursor: pointer; font-weight: 700;
 }
 
-/* Grid responsive para las tarjetas ShowSerie */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  margin-top: 12px;
+/* ============ RESULTADOS (equivalente a .ResultsDiv/.SeriesList) ============ */
+.results-panel{
+  position: relative; margin-left: 0; padding: 20px; width: 100%; box-sizing: border-box;
+  background: #e9f0ef; border-radius: 14px;
+}
+.grid{
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 15px; background: #347f78; padding: 32px; border-radius: 16px;
 }
 
+/* Tarjeta ShowSerie dentro del grid (equivalente a .SerieCard) */
+.grid > div{
+  background: #fff; border-radius: 16px; overflow: hidden;
+  border: 1px solid #e5e7eb; box-shadow: 0 8px 18px rgba(0,0,0,.06);
+}
+.ImgSerie{
+  width: 100%; height: 280px; object-fit: cover; background: #0f172a; transition: transform .2s ease;
+}
+.ImgSerie:hover{ transform: scale(1.05); cursor: pointer; }
+.TituloSerie{ margin: 10px 12px 4px; font-size: 16px; font-weight: 800; color: #0f172a; }
+.LengSerie, .RankingSerie{ margin: 0 12px 8px; font-size: 14px; color: #6b7280; }
+.BotonesSerie{ display: flex; gap: 8px; padding: 0 12px 12px; }
+.BotonesSerie button{
+  border: 0; border-radius: 8px; padding: 8px 10px; font-weight: 700; color: #fff; cursor: pointer;
+}
+.BotonesSerie button:first-child{ background: #23554f; }  /* Detalles */
+.BotonesSerie button:last-child{  background: #f59e0b; } /* Favoritos */
+
+/* Mensaje de no resultados (tu clase no-results) */
+.no-results{ margin: 0; padding: 12px; color: #0f172a; background: #fff; border-radius: 10px; }
+
+/* ============ MODAL (equivalente a .SeriesModal/.ModalContainer) ============ */
+.fondoModal{
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  display: flex; justify-content: center; align-items: center; z-index: 100; padding: 20px;
+}
+.cartaModal{
+  background: #e9f0ef; padding: 20px; width: 900px; max-width: 100%;
+  max-height: 80vh; overflow-y: auto; border-radius: 16px; border: 1px solid #dbe2ea;
+  display: grid; grid-template-columns: 360px 1fr; gap: 16px; position: relative;
+}
+.cerrarModal{
+  position: absolute; right: 10px; top: 8px; border: 0; background: transparent; font-size: 22px; cursor: pointer; color: #0f172a;
+}
+.imagenModal{ width: 100%; height: 420px; object-fit: cover; border-radius: 12px; background: #0f172a; }
+.contenidoModal{ padding: 0 10px; }
+.tituloModal{ margin: 0 0 6px; font-size: 22px; font-weight: 800; color: #0f172a; }
+.ratingModal, .generoModal{ margin: 0 0 8px; color: #6b7280; }
+
+@media (max-width: 1200px){
+  .grid{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px){
+  .layout{ grid-template-columns: 1fr; }
+  .favoritosList{ position: static; height: auto; }
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px){
+  .grid{ grid-template-columns: 1fr; }
+  .imagenModal{ height: 280px; }
+  .cartaModal{ grid-template-columns: 1fr; }
+}

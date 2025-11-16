@@ -1,120 +1,427 @@
-/* ============ BASE ============ */
-* { box-sizing: border-box; }
-html, body, #root { min-height: 100%; width: 100%; }
-body { margin: 0; background: #ffffff; color: #0f172a; font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; }
-
-/* Contenedor superior (padding global) */
-.app { padding: 2rem 1rem; }
-
-/* Título centrado */
-.app__title { margin: 0 0 1rem; font-size: 32px; font-weight: 800; text-align: center; }
-
-/* ============ SEARCHBAR (similar a .SearchBar de tu amigo) ============ */
-.sticky-wrap { position: sticky; top: 0; z-index: 10; padding: 12px 0 10px; background: linear-gradient(#fff, rgba(255,255,255,.9)); }
-.sticky-wrap form {
-  width: 60%; max-width: 60%; min-width: 60%;
-  margin: 2rem auto; display: flex; justify-content: center; position: relative;
-}
-.sticky-wrap input[type="text"]{
-  width: 100%; padding: 16px 20px; font-size: 18px; text-align: center;
-  border-radius: 999px; border: 1px solid #ccc; outline: none;
-  background: #333; color: #fff;
-}
-.sticky-wrap button[type="submit"]{
-  position: absolute; left: 90%; transform: translateX(-50%);
-  width: 35%; height: 100%; border: 0; border-radius: 999px;
-  background: #347f78; color: #fff; cursor: pointer;
-}
-.sticky-wrap button[type="submit"]:hover{ background: #23554f; }
-
-/* ============ LAYOUT (favoritos IZQ fijo | resultados DER) ============ */
-.layout{
-  width: 100%; max-width: 1280px; margin: 0 auto;
-  display: grid; grid-template-columns: 280px minmax(0,1fr); gap: 20px; align-items: start;
+/* Contenedor raíz de React (#root de index.html):
+   limita el ancho general y centra la app dentro de la ventana */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
-/* ============ FAVORITOS (equivalente a .FavoritesDiv) ============ */
-.favoritosList{
-  position: sticky; top: 20px;
-  width: 100%; background: #e9f0ef; border-radius: 20px; padding: 20px;
-  height: calc(100vh - 120px); overflow-y: auto;
-}
-.NameListFav{ margin: 0 0 10px; font-size: 18px; font-weight: 800; }
-.ListaFav{ display: flex; flex-direction: column; align-items: center; gap: 24px; }
-.ElementoFav{
-  width: 100%; display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 10px; border-radius: 12px; background: #fff; border: 1px solid #e5e7eb;
-}
-.BotonAbrirFav{
-  display: inline-flex; align-items: center; gap: 10px; background: transparent; border: 0; cursor: pointer; color: #0f172a; font-weight: 700;
-}
-.FotoSerieFav{ width: 36px; height: 36px; object-fit: cover; border-radius: 6px; background: #0f172a; }
-.NombreSerieFav{ font-size: 14px; }
-.RankingSerieFav{ font-size: 13px; color: #6b7280; }
-.EliminarDeFav{
-  background: #ffe6e6; border: 1px solid #ffb3b3; color: #b30000;
-  padding: 6px 10px; border-radius: 10px; cursor: pointer; font-weight: 700;
+/* Estilos generales del body:
+   - fuente global (Courier)
+   - fondo con degradado y brillos */
+body {
+  margin: 0;
+  font-family: "Courier New", monospace;
+ 
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.25), transparent 55%),
+    linear-gradient(135deg, #020617, #020617 30%, #0b1120 70%, #020617);
 }
 
-/* ============ RESULTADOS (equivalente a .ResultsDiv/.SeriesList) ============ */
-.results-panel{
-  position: relative; margin-left: 0; padding: 20px; width: 100%; box-sizing: border-box;
-  background: #e9f0ef; border-radius: 14px;
-}
-.grid{
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 15px; background: #347f78; padding: 32px; border-radius: 16px;
+/* CONTENEDOR PRINCIPAL DE LA APP:
+   limita el ancho del contenido principal y lo centra */
+.app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-/* Tarjeta ShowSerie dentro del grid (equivalente a .SerieCard) */
-.grid > div{
-  background: #fff; border-radius: 16px; overflow: hidden;
-  border: 1px solid #e5e7eb; box-shadow: 0 8px 18px rgba(0,0,0,.06);
+/* Titulo grande de la web */
+.tituloWeb {
+  margin: 0 0 1.5rem;
+  font-size: 2.5rem;
+  font-weight: 750;
+  text-align: center;
+  color: #060eec;
+  transition: transform 0.1s ease, text-shadow 0.2s ease;   
 }
-.ImgSerie{
-  width: 100%; height: 280px; object-fit: cover; background: #0f172a; transition: transform .2s ease;
-}
-.ImgSerie:hover{ transform: scale(1.05); cursor: pointer; }
-.TituloSerie{ margin: 10px 12px 4px; font-size: 16px; font-weight: 800; color: #0f172a; }
-.LengSerie, .RankingSerie{ margin: 0 12px 8px; font-size: 14px; color: #6b7280; }
-.BotonesSerie{ display: flex; gap: 8px; padding: 0 12px 12px; }
-.BotonesSerie button{
-  border: 0; border-radius: 8px; padding: 8px 10px; font-weight: 700; color: #fff; cursor: pointer;
-}
-.BotonesSerie button:first-child{ background: #23554f; }  /* Detalles */
-.BotonesSerie button:last-child{  background: #f59e0b; } /* Favoritos */
 
-/* Mensaje de no resultados (tu clase no-results) */
-.no-results{ margin: 0; padding: 12px; color: #0f172a; background: #fff; border-radius: 10px; }
+/* Efecto hover del titulo:
+   lo agranda un poco y le añade brillo */
+.tituloWeb:hover {
+  transform: scale(1.05);
+  text-shadow: 0 0 8px rgba(1, 32, 70, 0.6);
+}
 
-/* ============ MODAL (equivalente a .SeriesModal/.ModalContainer) ============ */
-.fondoModal{
-  position: fixed; inset: 0; background: rgba(0,0,0,.55);
-  display: flex; justify-content: center; align-items: center; z-index: 100; padding: 20px;
+/* BARRA DE BUSQUEDA:
+   contenedor de SearchBar, la centra horizontalmente */
+.barraBusqueda {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
 }
-.cartaModal{
-  background: #e9f0ef; padding: 20px; width: 900px; max-width: 100%;
-  max-height: 80vh; overflow-y: auto; border-radius: 16px; border: 1px solid #dbe2ea;
-  display: grid; grid-template-columns: 360px 1fr; gap: 16px; position: relative;
-}
-.cerrarModal{
-  position: absolute; right: 10px; top: 8px; border: 0; background: transparent; font-size: 22px; cursor: pointer; color: #0f172a;
-}
-.imagenModal{ width: 100%; height: 420px; object-fit: cover; border-radius: 12px; background: #0f172a; }
-.contenidoModal{ padding: 0 10px; }
-.tituloModal{ margin: 0 0 6px; font-size: 22px; font-weight: 800; color: #0f172a; }
-.ratingModal, .generoModal{ margin: 0 0 8px; color: #6b7280; }
 
-@media (max-width: 1200px){
-  .grid{ grid-template-columns: repeat(3, 1fr); }
+/* Input de la barra de busqueda (clase que usas en el JSX):
+   - color, grosor del marco, tamaño letra, etc. */
+.barraBusquedaInput {
+  color:#9490e1;
+  border: 4px solid #050505;
+  margin: 0 1rem;
+  font-weight: 700; 
+  font-size: 1rem;
 }
-@media (max-width: 900px){
-  .layout{ grid-template-columns: 1fr; }
-  .favoritosList{ position: static; height: auto; }
-  .grid{ grid-template-columns: repeat(2, 1fr); }
+
+/* Boton de busqueda (lupa):
+   - colores, degradado y efecto básico */
+.barraBusquedaButton {
+  background: linear-gradient(135deg, #22c55e, #06b6d4);
+  color: #0f161d;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-@media (max-width: 640px){
-  .grid{ grid-template-columns: 1fr; }
-  .imagenModal{ height: 280px; }
-  .cartaModal{ grid-template-columns: 1fr; }
+
+/* Hover del boton de busqueda:
+   lo sube un poco y hace zoom ligero */
+.barraBusquedaButton:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* LAYOUT PRINCIPAL:
+   divide la app en dos columnas:
+   - izquierda: favoritos
+   - derecha: resultados */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+/* Layout responsive: en pantallas pequeñas,
+   favoritos y resultados se ponen uno debajo de otro */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* COLUMNA DE FAVORITOS:
+   cajita redondeada con fondo oscuro y sombra,
+   que se queda “pegada” arriba al hacer scroll (sticky) */
+.favoritosList {
+  position: sticky;
+  top: 2rem;
+  align-self: flex-start;
+  background: radial-gradient(circle at top left, #1e293b, #020617);
+  border-radius: 70px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(162, 44, 44, 0.45);
+}
+
+/* Titulo “Tus Favoritos” dentro de la caja de favoritos */
+.NameListFav {
+  margin: 0 0 0.8rem;
+  font-size: 1rem;
+  font-weight: 1000;
+  color: #2f1cda;
+}
+
+/*Mensaje de error en el caso de que no haya favoritos */
+.FError {
+  font-size: 0.85rem;
+  color: #9aabc8;
+}
+
+/* Contenedor de la lista de favoritos:
+   columna de elementos uno debajo de otro */
+.ListaFav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Cada elemento favorito (linea con boton principal + boton quitar) */
+.ElementoFav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Botón grande de cada favorito:
+   contiene imagen + nombre + rating,
+   ocupa todo el ancho disponible */
+.BotonAbrirFav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: none;
+  background-color: #020617;
+  color: #9be508;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover del boton del favorito:
+   cambia el fondo y lo sube ligeramente */
+.BotonAbrirFav:hover {
+  background-color: #0f172a;
+  transform: translateY(-1px);
+}
+
+/* Imagen pequeñita de la serie en la lista de favoritos */
+.FotoSerieFav {
+  width: 34px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Nombre de la serie en la lista de favoritos */
+.NombreSerieFav {
+  font-size: 0.85rem;
+}
+
+/* Rating de la serie en favoritos (estrella + numero) */
+.RankingSerieFav {
+  font-size: 0.8rem;
+  color: #facc15;
+}
+
+/* Botón “Quitar” en cada favorito */
+.EliminarDeFav {
+  border: none;
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+/* Hover del botón “Quitar”:
+   cambia el rojo y lo sube un poco */
+.EliminarDeFav:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* CONTENEDOR DE RESULTADOS DE BUSQUEDA:
+   Estas medias se adaptan en funcion del estrechamiento de la pantalla, cuanto mas pequeña mejor se organiza */
+
+/* Grid de tarjetas de series:
+   4 columnas en escritorio */
+.SeriesList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* 3 columnas si la pantalla es mas estrecha */
+@media (max-width: 1100px) {
+  .SeriesList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 2 columnas en tablet/movil grande */
+@media (max-width: 800px) {
+  .SeriesList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 1 columna (tarjetas en columna) en movil pequeño */
+@media (max-width: 500px) {
+  .SeriesList {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Imagen de la serie dentro de la tarjeta */
+.ImgSerie {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.4rem;
+  border: 4px solid black;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+}
+
+/* Hover directo sobre la imagen:
+   se agranda, tiene sombra y cambia el color del borde */
+.ImgSerie:hover {
+  transform: scale(1.04);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  border: 4px solid #06b6d4;
+}
+
+/* Titulo de la serie en la tarjeta */
+.TituloSerie {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3b08e5;
+}
+
+/* Idioma de la serie */
+.LengSerie {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #9e9ea8; 
+}
+
+/* Puntuacion de la serie (rating) */
+.RankingSerie {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #f3b704;
+}
+
+/* Contenedor de los dos botones de la tarjeta:
+   “Detalles” y “Favoritos/Quitar” */
+.BotonesSerie {
+  margin-top: 0.4rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* Estilo general de los botones de la tarjeta */
+.BotonesSerie button {
+  flex: 1;
+  border-radius: 999px;
+  border: none;
+  padding: 0.35rem 0.4rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+/* Botón “Detalles” (el primero) */
+.BotonesSerie button:first-child {
+  background-color: #e5e7eb;
+  color: #0f172a;
+}
+
+/* Hover del botón “Detalles” */
+.BotonesSerie button:first-child:hover {
+  background-color: #123091;
+  transform: translateY(-1px);
+}
+
+/* Botón “Favoritos / Quitar” (el segundo) */
+.BotonesSerie button:last-child {
+  background: linear-gradient(135deg, #22c55e, #06b6d4);
+  color: #365f87;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover del botón de favoritos:
+   pequeño zoom y más sombra */
+.BotonesSerie button:last-child:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+}
+
+/* MODAL DETALLE:
+   fondo oscuro semitransparente que tapa toda la pantalla */
+.fondoModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(38, 56, 100, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+/* Caja del modal (tarjeta grande de detalles) */
+.cartaModal {
+  background: #020617;
+  border-radius: 18px;
+  max-width: 850px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  position: relative;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+}
+
+/* En pantallas pequeñas, el modal se convierte en una columna (imagen arriba, texto abajo) */
+@media (max-width: 800px) {
+  .cartaModal {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Boton de cerrar (X) del modal */
+.cerrarModal {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  border: none;
+  background-color: #1a2d57;
+  color: #0a0a0b;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+/* Hover del boton X del modal */
+.cerrarModal:hover {
+  background-color: #ef4444;
+  transform: scale(1.05);
+}
+
+/* Imagen grande dentro del modal */
+.imagenModal {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Contenedor del texto dentro del modal (titulo, rating, generos, etc.) */
+.contenidoModal {
+  padding: 1rem 1.3rem;
+  overflow-y: auto;
+}
+
+/* TTitulo de la serie en el modal */
+.tituloModal {
+  margin: 0 0 0.4rem;
+  font-size: 1.3rem;
+  color: #f9fafb;
+}
+
+/* Rating en el modal */
+.ratingModal {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #facc15;
+}
+
+/* Generos e idioma en el modal */
+.generoModal,
+.lenguajeModal {
+  margin: 0.2rem 0;
+  font-size: 0.85rem;
+  color: #cbd5f5;
+}
+
+/* Descripcion larga (summary) de la serie en el modal */
+.descripcionModal {
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #e5e7eb;
+}
+
+/* Ajuste de márgenes de los <p> que vienen del summary */
+.descripcionModal p {
+  margin: 0.35rem 0;
 }

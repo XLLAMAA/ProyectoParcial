@@ -13,7 +13,7 @@ export default function SearchBar({value, onChange, onSubmit, loading}) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input 
+      <input className="barraBusquedaInput"
         type="text" 
         placeholder="Buscar una serie"
         //texto que muestra el input
@@ -21,7 +21,7 @@ export default function SearchBar({value, onChange, onSubmit, loading}) {
         //Cada tecla avisa al padre (app) para actualizar el valor (value)
         onChange={(e) => onChange(e.target.value)}  
       />
-      <button type="submit" disabled={loading}>🔍</button>
+      <button className="barraBusquedaButton" type="submit" disabled={loading}>🔍</button>
     </form>
   );
 }

@@ -1,11 +1,19 @@
 export default function InfoSerie({ open, onClose, show, detail }) {
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   const img =
     detail?.image?.original ||
     show?.image?.original ||
     show?.image?.medium ||
     "";
+
+  //Datos de la serie a mostrar en el modal
+  const summary = detail?.summary || show?.summary || "<p>No hay descripción disponible.</p>";
+  const language = detail?.language || show?.language || "—";
+  const rating = detail?.rating?.average ?? show?.rating?.average ?? "N/A";
+  const genres = (detail?.genres || show?.genres || []).join(", ");
 
   // Cierro al clicar fuera del modal
   const cerrarClickFondo = (e) => {
@@ -38,6 +46,13 @@ export default function InfoSerie({ open, onClose, show, detail }) {
           <p className="generoModal">
             {(detail?.genres || show?.genres || []).join(", ")}
           </p>
+
+          <p className="lenguajeModal">
+            Idioma: {language}
+          </p>
+
+          {/* Descripcion de la serie, uso dangerouslySetInnerHTML para que muestre como descripcion justo lo que pone en la serie TVMaze */}
+          <div className="descripcionModal" dangerouslySetInnerHTML={{ __html: summary }}></div>
 
         </div>
       </article>

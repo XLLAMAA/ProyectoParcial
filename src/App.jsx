@@ -240,6 +240,7 @@ export default function App() {
         show={openShow}
         detail={detail}
       />
+      <p className="firma">Hecho por Jaime Adánez</p>
     </main>
   );
 }
